@@ -1,4 +1,6 @@
+from tkinter import W
 from django.contrib import admin
-from members.models import Member
+from members.models import Member, Wallet
 # Register your models here.
 admin.site.register(Member)
+admin.site.register(Wallet)

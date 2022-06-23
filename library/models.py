@@ -7,6 +7,7 @@ class Library(models.Model):
     name = models.CharField('Library Name', max_length=35, unique=True)
     books_instock = models.PositiveIntegerField('Books InStock', default=0)
     books_rented_out = models.PositiveIntegerField('Books Rented Out', default=0)
+    books_lost = models.PositiveIntegerField('Books Lost', default=0)
     max_book = models.PositiveSmallIntegerField('Maximum Books Person can Rent', default=3)
     max_debt_allowed = models.PositiveSmallIntegerField('Maximum Debt allowed', default=500)
 

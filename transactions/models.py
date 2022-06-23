@@ -22,10 +22,10 @@ class Transaction(models.Model):
     
     def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
-            # store intial values to avoid unneccesary database calls
-            self.intial_is_return = self.is_return
-            self.before_is_lost = self.is_lost
-            self.intial_trans_amount = self.trans_amount
+            # store initial values to avoid unneccesary database calls
+            self.initial_is_return = self.is_return
+            self.initial_is_lost = self.is_lost
+            self.initial_trans_amount = self.trans_amount
 
     def __str__(self):
         name = self.member.full_name or ' '.join((self.member.first_name, self.member.first_name))
@@ -52,8 +52,8 @@ class WalletTransacton(models.Model):
 
     def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
-            # store intial values to avoid unneccesary database calls
-            self.intial_trans_amount = self.trans_amount
+            # store initial values to avoid unneccesary database calls
+            self.initial_trans_amount = self.trans_amount
 
     def __str__(self):
         name = self.member.full_name or ' '.join((self.member.first_name, self.member.first_name))

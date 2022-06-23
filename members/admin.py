@@ -1,4 +1,3 @@
-from tkinter import W
 from django.contrib import admin
 from members.models import Member, Wallet
 # Register your models here.

@@ -1,6 +1,4 @@
-from socket import send_fds
 from django.dispatch import receiver
-from library.models import Library
 from books.models import Book
 from transactions.models import Transaction
 from django.db.models.signals import post_save, pre_delete, m2m_changed

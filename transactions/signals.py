@@ -2,7 +2,6 @@ from django.dispatch import receiver
 from django.db.models.signals import pre_save, post_save, post_delete
 from transactions.models import Transaction, WalletTransacton
 from django.utils.timezone import now
-from django.db.models import Q, Count
 from django.core.exceptions import ValidationError
 
 

@@ -79,6 +79,7 @@ class Book(models.Model):
     def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
             # store initial values to avoid unneccesary database calls
+            self.m2m_changed_save = False
             self.initial_instock_qty = self.instock_qty
 
     def __str__(self):

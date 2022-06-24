@@ -71,13 +71,15 @@ def stock_controller(book, library, instance, created: bool = False, deleted: bo
 
 @receiver(pre_save, sender=Book)
 def before_book_save(instance, **kwargs):
-	if not instance.pk:
+	if not instance.pk and not instance.m2m_changed_save:
 		instance.library.books_instock += instance.instock_qty
-		instance.library.save()
-	else:
+
+	elif not instance.m2m_changed_save:
 		change_in_qty = instance.instock_qty - instance.initial_instock_qty
 		instance.library.books_instock += change_in_qty
-		instance.library.save()
+	
+	instance.library.save()
+
 
 
 @receiver(pre_delete, sender=Book)
@@ -101,6 +103,7 @@ def book_publiser_m2m_changed(instance, action, **kwargs):
 					.values('full_name')
 				]
 		)
+		instance.m2m_changed_save = True
 		instance.save()
 
 
@@ -116,6 +119,7 @@ def book_authors_m2m_changed(instance, action, **kwargs):
 				.values('full_name')
 				]
 		)
+		instance.m2m_changed_save = True
 		instance.save()
 
 

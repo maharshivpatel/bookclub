@@ -6,8 +6,7 @@
   {% csrf_token %}
 
   {% for error in form.non_field_errors %}
-  {{error}}
-
+    {{error}}
   {% endfor %}
 
   {% for field in form.visible_fields %}
@@ -25,8 +24,7 @@
 
   <button class="w-100 btn btn-lg btn-primary fs-6 mx-1" type="submit">{{ guest.p_btn_txt }}</button>
   <div class="divider mb-2 mt-3">or</div>
-  <small><a class="text-link text-decoration-none text-right" href="{% url guest.s_url_name %}">{{ guest.s_btn_txt
-      }}</a></small>
+  <small><a class="text-link text-decoration-none text-right" href="{% url guest.s_url_name %}">{{ guest.s_btn_txt }}</a></small>
 
 </form>
 {% endblock %}

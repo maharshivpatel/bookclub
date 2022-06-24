@@ -12,9 +12,15 @@ class Member(Person):
     def __str__(self):
         return self.full_name or str(self.first_name + ' ' + self.last_name)
 
+
 class Wallet(models.Model):
     member = models.OneToOneField(Member, related_name='wallet', editable=False, on_delete=models.CASCADE)
     balance = models.DecimalField( max_digits=6, decimal_places=2, editable=False, default=0.00)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-modified',]
 
     def __str__(self):
          return ' | '.join((self.member.full_name, str(self.balance)))

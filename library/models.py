@@ -28,6 +28,9 @@ class Librarian(AbstractUser):
 class Person(models.Model):
     full_name = models.CharField('Full Name', max_length=60)
     email = models.EmailField('Email', null=True, blank=True)
-    
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+
     class Meta:
         abstract = True
+        ordering = ['-modified',]

@@ -9,6 +9,8 @@ class Transaction(models.Model):
     library = models.ForeignKey(Library, related_name='transaction', on_delete=models.CASCADE)
     trans_amount = models.DecimalField('Amount',  max_digits=6, decimal_places=2, blank=True, null=True, default=0) # editable=False
     created_by = models.ForeignKey(Librarian, related_name='transaction', on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
     book = models.ForeignKey(Book, related_name='transaction', on_delete=models.CASCADE)
     # duration is only useful if want to implement extra features like show time if less than 1 day
     duration = models.DurationField('Rent Duration', null=True, blank=True, editable=False) 
@@ -18,7 +20,7 @@ class Transaction(models.Model):
     return_date = models.DateTimeField('Book Returned on',  blank=True, editable=False, null=True)
 
     class Meta:
-        ordering = ['-issue_date',]
+        ordering = ['-modified',]
     
     def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
@@ -49,6 +51,7 @@ class WalletTransacton(models.Model):
 
     class Meta:
         ordering = ['-created',]
+
     def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
             # store initial values to avoid unneccesary database calls

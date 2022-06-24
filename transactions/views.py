@@ -37,6 +37,7 @@ def transactions_view(request):
 		{
 			'field_name': 'member__full_name',
 			'field_title': 'Members',
+			'url_prefix': 'details',
 			'html_attr': 'autofocus',
 		},
 		{

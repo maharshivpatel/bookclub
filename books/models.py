@@ -76,6 +76,9 @@ class Book(models.Model):
     pages_in_book = models.PositiveSmallIntegerField('Pages in Book', null=True)
     library = models.ForeignKey(Library, related_name='book', on_delete=models.CASCADE)
 
+    class Meta:
+        ordering = ['-modified',]
+
     def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
             # store initial values to avoid unneccesary database calls

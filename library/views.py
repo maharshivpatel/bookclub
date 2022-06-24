@@ -1,8 +1,9 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from library.models import Library, Librarian
+from library.forms import LibrarianCreationForm, LibrarianLoginForm, LibraryCreationForm, LibrarySelectForm, LibrarianUpdateForm
 from django.contrib import messages
-from django.contrib.auth import logout
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 
 
@@ -16,7 +17,6 @@ def guest_view(request):
         return redirect('userlogin')
 
     if request.user.is_authenticated and not request.user.library:
-        messages.add_message(request, messages.INFO, 'Please create Library to continue')
         return redirect('librarycreate')
     
     if request.user.is_authenticated and request.user.library:
@@ -38,8 +38,22 @@ def usercreate_view(request):
         messages.add_message(request, messages.INFO, 'You are already logged in as user.')
         return redirect('books')
 
-    messages.add_message(request, messages.INFO, 'Please Enter Details to create Librarian')
-    return render(request, 'library/guest_flow.html',  {'guest': guest})
+    if request.method == 'POST':
+        form = LibrarianCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            user.refresh_from_db()  
+            user.save()
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=user.username, password=raw_password)
+            login(request, user)
+            messages.add_message(request, messages.INFO, 'Please create Library to continue')
+            return redirect('librarycreate')
+    else:
+        form = LibrarianCreationForm()
+
+    messages.add_message(request, messages.INFO, 'Please create user to continue')
+    return render(request, 'library/guest_flow.html',  {'guest': guest, 'form': form})
 
 
 def userlogin_view(request):
@@ -54,8 +68,34 @@ def userlogin_view(request):
         messages.add_message(request, messages.INFO, 'You are already logged in as user.')
         return redirect('books')
 
-    messages.add_message(request, messages.INFO, 'Please Login to continue')
-    return render(request, 'library/guest_flow.html', {'guest': guest})
+    if request.method == 'POST':
+
+        form = LibrarianLoginForm(request.POST)
+
+        if form.is_valid():
+
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=raw_password)
+
+            if user is not None:
+                login(request, user)
+
+                if not user.library:
+                    return redirect('librarycreate')
+
+                messages.add_message(request, messages.INFO, f'Welcome to {request.user.library}')
+                return redirect('books')
+
+        messages.add_message(request, messages.ERROR, 'Username or Password is Incorrect.')
+
+        return render(request, 'library/guest_flow.html', {'guest': guest, 'form': form})
+
+    else:
+        messages.add_message(request, messages.INFO, 'Please Login to continue')
+        form = LibrarianLoginForm()
+
+    return render(request, 'library/guest_flow.html', {'guest': guest, 'form': form})
 
 
 def librarycreate_view(request):
@@ -70,8 +110,26 @@ def librarycreate_view(request):
         messages.add_message(request, messages.INFO, f'You are already a librarian at {request.user.library}.')
         return redirect('books')
 
-    messages.add_message(request, messages.INFO, 'Please enter details to create Librarian')
-    return render(request, 'library/guest_flow.html',  {'guest': guest})
+    if request.method == 'POST':
+        
+        form = LibraryCreationForm(request.POST)
+        
+        if form.is_valid():
+            
+            formobj = form.save()
+            request.user.library = formobj
+            request.user.save()
+            
+            return redirect('books')
+
+        return render(request, 'library/guest_flow.html', {'guest': guest, 'form': form})
+
+    else:
+        form = LibraryCreationForm()
+
+    messages.add_message(request, messages.INFO, 'Please enter details to create Library')
+
+    return render(request, 'library/guest_flow.html',  {'guest': guest, 'form': form} )
 
 
 def libraryselect_view(request):
@@ -86,8 +144,29 @@ def libraryselect_view(request):
         messages.add_message(request, messages.INFO, f'You are already a librarian at {request.user.library}.')
         return redirect('books')
 
-    messages.add_message(request, messages.INFO, 'Please Select Library to continue')
-    return render(request, 'library/guest_flow.html', {'guest': guest})
+    if request.method == 'POST':
+        form = LibrarySelectForm(request.POST)
+
+        if form.is_valid():
+
+            if form.cleaned_data.get('library'):
+            
+                request.user.library = form.cleaned_data.get('library')
+                request.user.save()
+            
+                messages.add_message(request, messages.INFO, f'You have selected {request.user.library} Library.')
+            
+                return redirect('books')
+        
+        messages.add_message(request, messages.WARNING, 'Please Select your Library.')
+        
+        return render(request, 'library/guest_flow.html', {'guest': guest, 'form': form} )
+
+    else:
+        form = LibrarySelectForm()
+        messages.add_message(request, messages.SUCCESS, 'Please Select your Library.')
+
+    return render(request, 'library/guest_flow.html', {'guest': guest, 'form': form} )
 
 @login_required
 def profile_view(request):
@@ -101,7 +180,17 @@ def profile_view(request):
         }
     }
 
-    return render(request, 'library/page_edit.html', {'page': page})
+    librarian = Librarian.objects.get(id = request.user.id)
+
+    form = LibrarianUpdateForm(request.POST or None, request.FILES or None, instance=librarian)
+    
+    if form.is_valid():
+        form.save()
+        messages.add_message(request, messages.SUCCESS, 'Information Saved.')
+    
+        return redirect('books')
+
+    return render(request, 'library/page_edit.html', {'page': page, 'form': form})
 
 
 def logout_view(request):

@@ -168,7 +168,7 @@ MESSAGE_TAGS = {
         messages.ERROR: 'alert-danger',
  }
 
-LOGIN_URL = 'login'
+LOGIN_URL = 'userlogin'
 LOGIN_REDIRECT_URL = "books"
 LOGOUT_REDIRECT_URL = "/"
 

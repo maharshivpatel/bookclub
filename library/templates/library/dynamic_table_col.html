@@ -1,0 +1,24 @@
+{% for ldata in data %}
+
+<tr id="row_{{ldata.0.value}}">
+  {% if api %}
+  <td class="my-2 py-3" form="main-form">
+    <input type='checkbox' form="main-form" value='0' name='selected'>
+    <input hidden aria-hidden="true" form="main-form" type="text" value="{{ldata.0.value}}" name="bookid">
+  </td>
+  {% endif %}
+  {% for data in ldata %}
+  <td class="my-2 py-3 word-wrap">
+    {% if not data.url_prefix %}
+    <div {% if data.css_class %} class="{{data.css_class}}" {% endif %}>{{data.value}}</div>
+    {% else %}
+    <a href="{{data.url_prefix }}" class="{{data.css_class}}">{{data.value}}</a>
+    {% endif %}
+  </td>
+  {% endfor %}
+  {% if api %}
+  <td class="my-2 py-3"><input style="width:50px; text-align: center;" form="main-form" type="number" name="qty"
+      value="0" min="0" required="true"></td>
+  {% endif %}
+</tr>
+{% endfor %}

@@ -1,0 +1,36 @@
+{% load static %}
+<div class="header navbar navbar-expand flex-column flex-md-row bd-navbar shadow-sm fixed-top">
+    <nav class="container navbar navbar-expand-lg navbar-light bg-white">
+        <div class="container">
+        <div class="row w-100">
+            <a class="col-2 text-start navbar-brand" href="{% url 'books' %}">
+                <img src="{% static 'assets/logo-dashboard.svg' %}" alt="BookClub" class="navbar-brand logo">
+            </a>
+
+            <div class="col navbar-nav">
+                <a class="nav-item nav-link {% if request.path == '/transactions/' %} active {% endif %}"
+                    href="{% url 'transactions' %}">Transactions</a>
+                <a class="nav-item nav-link {% if request.path == '/books/' %} active {% endif %}"
+                    href="{% url 'books' %}">Books</a>
+                <a class="nav-item nav-link {% if request.path == '/members/' %} active {% endif %}"
+                    href="{% url 'members' %}">Members</a>
+            </div>
+            <form class="col form-inline search" action="/search">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search for books, authors, transactions..." disabled aria-label="Search" name="search">
+            </form>
+            <div class="col-1 text-end dropdown">
+                {% if request.user.profile_pic.url != "" %}
+                <img src="{{ request.user.profile_pic.url }}" alt="Avatar" height="50px" class="avatar rounded-circle dropdown-toggle" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                {% else %}
+                <img class="avatar rounded-circle" width="50" height="50"  id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" avatar="{{ request.user.first_name }}">
+                {% endif %}
+                  <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
+                    <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                    </ul>
+            </div>
+        </div>
+        </div>
+    </nav>
+</div>

@@ -1,0 +1,54 @@
+<div class="container align-items-center title-section">
+    <div class="row mt-3">
+        <div class="col-2">
+            <p class=" h5 text-start fw-bold pagetitle">{{ page.title }}</p>
+        </div>
+        <div class="col overflow-auto align-self-center" style="height: 74px;">
+            {% include './messages.html' %}
+        </div>
+        <div class="col-3" align="right">
+        {% for button in page.buttons %}
+            {% if button %}
+                {% if button.button_action == "openmodal" %}
+                    <button class="col btn btn-{% if not button.css_btn_type %}primary{%else%}{{button.css_btn_type}}{%endif%} mr-3"
+                        data-bs-toggle="modal" data-bs-target="#{{button.modal_target}}">
+                            {{button.btn_text}}
+                    </button>
+
+                {% elif button.button_action == "submit" %}
+                    <button class="col btn btn-{% if not button.css_btn_type %}primary{%else%}{{button.css_btn_type}}{%endif%} mr-3"
+                        form="main-form" type="submit">
+                            {{button.btn_text}}
+                    </button>
+
+                {% elif button.button_action == "post_form" %}
+                    <button class="col btn btn-{% if not button.css_btn_type %}danger{%else%}{{button.css_btn_type}}{%endif%} mr-3" form="id_{{button.url_name}}"
+                        type="submit">
+                            {{button.btn_text}}
+                    </button>
+                    {% if button.obj_url_id %}
+                    <form hidden="true" id="id_{{button.url_name}}"
+                        action="{% url button.url_name id=button.obj_url_id%}"
+                        method="post">
+                        {% csrf_token %}
+                    </form>
+                    {% else %}
+                    <form hidden="true" id="id_{{button.url_name}}"
+                        action="{% url button.url_name %}"
+                        method="post">
+                        {% csrf_token %}
+                    </form>
+                    {% endif %}
+
+                {% elif button.button_action == "redirect" %}
+                    <a  href="{% if button.obj_url_id %}{% url button.url_name id=button.obj_url_id %}{% else %} {% url button.url_name %} {% endif %}"
+                        class="col mr-3 btn btn-{% if not button.css_btn_type %}primary{%else%}{{button.css_btn_type}}{%endif%} active"
+                        role="button" aria-pressed="true">
+                            {{button.btn_text}}
+                    </a>
+                {% endif%}
+            {% endif%}
+            {% endfor %}
+        </div>
+    </div>
+</div>

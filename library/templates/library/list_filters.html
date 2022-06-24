@@ -1,0 +1,22 @@
+<form class="form-inline search" name="'filterForm" id="filter-form" action="">
+  {% if extra_filters|length > 0 %}
+  <tr class="filter-section">
+    {% if api %}
+    <th></th>
+    {% endif %}
+    {% for field in extra_filters %}
+      {% include './filters.html' %}
+    {% endfor %}
+  </tr>
+  {% endif %}
+
+  <tr class="filter-section">
+    {% if api %}
+    <th></th>
+    {% endif %}
+    {% for field in fields %}
+      {% include './filters.html' %}
+    {% endfor %}
+  </tr>
+  <input type="submit" hidden />
+</form>

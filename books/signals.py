@@ -1,7 +1,8 @@
 from django.dispatch import receiver
+from django.forms import ValidationError
 from books.models import Book
 from transactions.models import Transaction
-from django.db.models.signals import post_save, pre_delete, m2m_changed
+from django.db.models.signals import pre_save, post_save, pre_delete, m2m_changed
 
 
 def stock_controller(book, library, instance, created: bool = False, deleted: bool = False):
@@ -68,15 +69,24 @@ def stock_controller(book, library, instance, created: bool = False, deleted: bo
 	if initial_is_lost and not is_lost: return lost_to_instock();
 
 
-@receiver(post_save, sender=Book)
-def after_book_save(instance, created, **kwargs):
-	if created:
+@receiver(pre_save, sender=Book)
+def before_book_save(instance, **kwargs):
+	if not instance.pk:
 		instance.library.books_instock += instance.instock_qty
 		instance.library.save()
+	else:
+		change_in_qty = instance.instock_qty - instance.initial_instock_qty
+		instance.library.books_instock += change_in_qty
+		instance.library.save()
+
 
 @receiver(pre_delete, sender=Book)
 def before_book_delete(instance, **kwargs):
-		instance.library.books_instock -= instance.instock_qty
+	if instance.rented_out_qty != 0:
+		raise ValidationError('This book is still rented to Members you can\'t delete it.')
+	instance.library.books_instock -= instance.instock_qty
+	instance.library.save()
+
 
 
 @receiver(m2m_changed, sender=Book.publishers.through)

@@ -76,5 +76,10 @@ class Book(models.Model):
     pages_in_book = models.PositiveSmallIntegerField('Pages in Book', null=True)
     library = models.ForeignKey(Library, related_name='book', on_delete=models.CASCADE)
 
+    def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            # store initial values to avoid unneccesary database calls
+            self.initial_instock_qty = self.instock_qty
+
     def __str__(self):
         return self.title

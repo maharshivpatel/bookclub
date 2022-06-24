@@ -215,7 +215,7 @@ def transactiondetail_view(request, id):
 			}
 		)
 
-	if not transaction[0]['is_lost']:
+	if not transaction[0]['is_lost'] and not transaction[0]['is_return']:
 
 		page['buttons'].append(
 			{

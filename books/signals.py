@@ -84,9 +84,14 @@ def before_book_save(instance, **kwargs):
 
 @receiver(pre_delete, sender=Book)
 def before_book_delete(instance, **kwargs):
+	
 	if instance.rented_out_qty != 0:
 		raise ValidationError('This book is still rented to Members you can\'t delete it.')
+	
 	instance.library.books_instock -= instance.instock_qty
+	
+	instance.library.books_lost -= instance.lost_qty
+	
 	instance.library.save()
 
 
@@ -146,3 +151,5 @@ def before_transaction_delete(instance, **kwargs):
 		).first()
 
 	stock_controller(book, instance.library, instance, deleted=True)
+	book.save()
+	instance.library.save()

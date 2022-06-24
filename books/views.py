@@ -369,7 +369,7 @@ def booksimport_view(request):
 					'qty' : qty[i[0]],
 				}
 			for i in enumerate(bookid)
-			if qty[i[0]] > 0
+			if int(qty[i[0]]) > 0
 			]
 		) 
 		

@@ -16,6 +16,7 @@ $('[name="qty"]').change(function(e) {
 });
     
     let frm = $('#main-form');
+    let is_data_empty = true
 
     frm.submit(function (e) {
         e.preventDefault();
@@ -24,28 +25,32 @@ $('[name="qty"]').change(function(e) {
             return !el.checked
          });
 
-        empty.forEach(element => {
-            element.parentElement.parentElement.remove()
-        });
-        
-         if (checkboxes.length == empty.length) {
-            is_data_empty = true
+         if (checkboxes.length != empty.length) {
+            is_data_empty = false
+            empty.forEach(element => {
+                element.parentElement.parentElement.remove()
+            });
         }
+
+        
 
 const successHandler = (data) => {
         url = window.location.origin + '/books/'
         window.location.replace(url);
     }
 
-   $.ajax({
-        type: frm.attr('method'),
-        url: frm.attr('action'),
-        data: frm.serialize(),
-        success: successHandler(),
-        error: function(data) {
-            console.log("Error");
-        }
-    });
-    return false;
-}
-);
+    if ( is_data_empty == false ) {
+        
+        $.ajax({
+             type: frm.attr('method'),
+             url: frm.attr('action'),
+             data: frm.serialize(),
+             success: setTimeout(successHandler, 2000),
+             error: function(data) {
+                 console.log("Error");
+             }
+         });
+    }
+     return false;
+ }
+ );

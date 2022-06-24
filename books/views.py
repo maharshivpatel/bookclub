@@ -167,9 +167,9 @@ def booksdetail_view(request, id):
 		},
 	]
 
-	list_of_fields = [ field['field_name'] for field in fields ]
-	book = Book.objects.filter(library=request.user.library, id=id).values(*list_of_fields)
-	
+	fieldlist = [ field['field_name'] for field in fields ]
+	book = Book.objects.filter(library=request.user.library, id=id).values(*fieldlist)
+
 	if len(book) == 0:
 		messages.add_message(request, messages.WARNING, f"Detail Page for this book doesn't exist or you don't have access to it.")
 		return redirect('books')
@@ -369,6 +369,7 @@ def booksimport_view(request):
 					'qty' : qty[i[0]],
 				}
 			for i in enumerate(bookid)
+			if qty[i[0]] > 0
 			]
 		) 
 		

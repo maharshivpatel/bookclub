@@ -2,28 +2,29 @@
 
 {% block content %}
 <div class="container bg-white border detail-container rounded-3 shadow-sm my-3 mx-3">
-		<form class="form-group mt-3 p-3 p-md-4 border rounded-3 bg-white shadow-sm" id="main-form" method="post" action="" enctype="multipart/form-data">
+	<form class="form-group mt-3 p-3 p-md-4 border rounded-3 bg-white shadow-sm" id="main-form" method="post" action=""
+		enctype="multipart/form-data">
 		<div class="row text-start ">
 			{% csrf_token %}
-			
+
 			{% for error in form.non_field_errors %}
-				{{error}}
+			{{error}}
 			{% endfor %}
-			
+
 			<div class="row my-2 py-3">
 				{% for field in form.visible_fields %}
-					<div class="mb-3 fxs-6 col-6 border-bottom border-2 py-2 border-light">
-						<label class="form-label text-muted" for="{{ field.auto_id }}">{{ field.label }}</label>
-						{{field}}
-					
-						{% if field.errors %}
-							{{ field.errors }}
-							<small class="text-muted fxs-6">{{field.help_text}}</small>
-						{% endif %}
-					</div>
+				<div class="mb-3 fxs-6 col-6 border-bottom border-2 py-2 border-light">
+					<label class="form-label text-muted" for="{{ field.auto_id }}">{{ field.label }}</label>
+					{{field}}
+
+					{% if field.errors %}
+					{{ field.errors }}
+					<small class="text-muted fxs-6">{{field.help_text}}</small>
+					{% endif %}
+				</div>
 				{% endfor %}
 			</div>
 		</div>
 	</form>
-	</div>
+</div>
 {% endblock %}

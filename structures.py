@@ -64,6 +64,10 @@ modal_form_structure = [
       's_btn_txt': 'Secondary Button',
       # all button styles from bootstrap 5. name excluding btn-
       's_btn_type': 'secondary',
+      # url name to which primary btn should submit
+      'submit_url_name': ' urlname',
+      # incase of edit form you can povide id as well
+      'obj_url_id': id,
       # django form instance name 
       'form': 'django-form-variable-name',
     },

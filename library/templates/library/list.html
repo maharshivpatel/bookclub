@@ -1,4 +1,5 @@
 {% extends './dashboard_base.html' %}
+{% load static %}
 {% block content %}
 <div class="container bg-white border main-container rounded-3 shadow-sm my-3 mx-3">
   <table class="table table-responsive table-style mt-2">
@@ -8,11 +9,8 @@
       
       <tr>
         {% if api %}
-          <th>
-            <input type="checkbox" name="select" id="tableselectall">
-          </th>
+          <th></th>        
         {% endif %}
-        
         {% for field in fields %}
           <th class="my-2 py-3">{{ field.field_title }}</th>
         {% endfor %}
@@ -20,22 +18,26 @@
         {% if api %}
           <th class="my-2 py-3">Qty</th>
         {% endif %}
-
+        
       </tr>
-
+      
     </thead>
-
+    
     <form id="main-form" method="post">
       {% csrf_token %}
       <tbody>
         {% include './dynamic_table_col.html' %}
       </tbody>
+      {% if api %}
+      <input hidden aria-hidden="true" form="main-form" type="json" value="{{raw_data}}" id="raw_json"
+      name="raw_json">
+      {% endif %}
     </form>
   </table>
   {% if data|length == 0 %}
-<h4 class="font-italic text-secondary mt-5 pt-5">There aren't any {{page.title}} to display.</h4>
-{% endif %}
-
-{% include 'library/modalforms.html' %}
-
-{% endblock %}
+  <h4 class="font-italic text-secondary mt-5 pt-5">There aren't any {{page.title}} to display.</h4>
+  {% endif %}
+  
+  {% include 'library/modalforms.html' %}
+  
+  {% endblock %}

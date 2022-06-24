@@ -4,7 +4,7 @@ import datetime
 import humanize
 import requests as rq
 
-def handle_filters(request, fields, api=False, extra_filters=False):
+def handle_filters(request, fields, extra_filters=False, api=False):
 
 	filters = {}
 

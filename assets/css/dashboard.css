@@ -1,0 +1,99 @@
+body {
+  background: #f2f2f2;
+}
+
+body .errorlist {
+  list-style: none;
+  text-align: left;
+}
+
+body .errorlist li {
+  color: orangered;
+}
+
+body .errorlist:last-child {
+  color: grey;
+  font-size: smaller;
+}
+
+body .navbar-light .navbar-nav {
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+body .navbar-light .navbar-nav .nav-link.active {
+  color: #005FA5;
+}
+
+body .filter-search {
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
+  font-size: 0.8em;
+}
+
+body .filter-search input {
+  font-size: 0.8em;
+}
+
+body .navbar-light .search {
+  min-width: 350px;
+  width: 100% !important;
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
+}
+
+body .navbar-light .search input {
+  font-size: 0.9em;
+}
+
+body .header {
+  background-color: #ffffff;
+}
+
+body .header .logo {
+  width: 100%;
+  max-width: 120px;
+  max-width: 150px;
+}
+
+body .pagetitle {
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
+}
+
+body .main-container {
+  min-height: 600px;
+}
+
+body .title-section {
+  top: 85px;
+  position: -webkit-sticky;
+  position: sticky;
+  background-color: #f2f2f2;
+}
+
+body .filter-section {
+  top: 175px;
+  position: -webkit-sticky;
+  position: sticky;
+  background-color: #ffffff;
+}
+
+body .detail-container {
+  min-height: 650px;
+}
+
+body .table-style {
+  font-size: 0.9em;
+  text-align: start;
+}
+
+body .table-style a {
+  text-decoration: none;
+  color: #005FA5;
+}
+/*# sourceMappingURL=dashboard.css.map */

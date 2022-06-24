@@ -1,0 +1,48 @@
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #fafafa;
+  .logo {
+    max-width: 270px;
+  }
+  .messages {
+    max-width: 400px!important; 
+    margin: auto;
+  }
+}
+
+.errorlist {
+  list-style: none;
+  text-align: left;
+}
+
+.errorlist li {
+  color: orangered;
+}
+
+.errorlist:last-child {
+  color: grey;
+  font-size: smaller;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+}
+
+
+.divider::after,
+.divider::before {
+  content: "";
+  border: 0.5px solid lightgray;
+  flex: 1;
+}
+
+
+.divider:not(:empty)::before {
+  margin-right: 0.25em;
+}
+
+.divider:not(:empty)::after {
+  margin-left: 0.25em;
+}

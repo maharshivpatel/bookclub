@@ -27,7 +27,7 @@ def before_transaction_save(instance, **kwargs):
 
 	if (
 		(
-			instance.member.transaction.all()
+			instance.member.transaction
 			.filter(
 				is_return=False,
 				is_lost=False,
@@ -38,7 +38,7 @@ def before_transaction_save(instance, **kwargs):
 		)
 		and not instance.pk
 	):
-		raise ValidationError(f"Member can't have books more than {instance.created_by.library.max_book_person} at a time.")
+		raise ValidationError(f"Member can't have books more than {instance.library.max_book} at a time.")
 
 	if (
 			(
@@ -47,7 +47,7 @@ def before_transaction_save(instance, **kwargs):
 			)
 			and not instance.pk
 	):
-		raise ValidationError(f"Member can't have debt of more than ₹ {instance.created_by.library.max_debt_allowed}.")
+		raise ValidationError(f"Member can't have debt of more than ₹ {instance.library.max_debt_allowed}.")
 
 	
 	if not instance.pk:
@@ -59,6 +59,7 @@ def before_transaction_save(instance, **kwargs):
 				.filter(
 					is_return=False,
 					is_lost=False,
+					member=instance.member,
 				)
 				.count()
 				!= 0

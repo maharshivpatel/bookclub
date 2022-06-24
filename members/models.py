@@ -7,7 +7,7 @@ class Member(Person):
     first_name = models.CharField('First Name', max_length=35)
     last_name = models.CharField('Last Name', max_length=35)
     library = models.ForeignKey(Library, verbose_name="Library", related_name='member', on_delete=models.CASCADE)
-    phone_number = PhoneNumberField(unique=True)
+    phone_number = PhoneNumberField()
 
     def __str__(self):
         return self.full_name or str(self.first_name + ' ' + self.last_name)

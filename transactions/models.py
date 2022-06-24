@@ -18,7 +18,7 @@ class Transaction(models.Model):
     return_date = models.DateTimeField('Book Returned on',  blank=True, editable=False, null=True)
 
     class Meta:
-        get_latest_by = '-created'
+        ordering = ['-issue_date',]
     
     def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
@@ -48,8 +48,7 @@ class WalletTransacton(models.Model):
     note = models.TextField('Transaction Note', blank=True, null=True)
 
     class Meta:
-        get_latest_by = '-created'
-
+        ordering = ['-created',]
     def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
             # store initial values to avoid unneccesary database calls

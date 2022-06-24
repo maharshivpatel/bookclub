@@ -2,7 +2,9 @@ from django.shortcuts import render, redirect
 from transactions.models import Transaction 
 from bookclub.utils import get_cover_from_api, handle_data, handle_filters
 from django.contrib import messages
+from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import login_required
+from transactions.forms import IssueBookForm, MoneyForm
 
 @login_required
 def transactions_view(request):
@@ -63,6 +65,25 @@ def transactions_view(request):
 			'field_title': 'Return Date',
 		},
 	]
+
+	issuebook_initial = {
+		'library': request.user.library,
+		'created_by': request.user,
+	}
+
+	addmoney_initial = {
+			'library': request.user.library,
+			'created_by': request.user,
+			'is_add_balance': True
+			}
+	
+	try:
+		issuebook_form = IssueBookForm(initial=issuebook_initial)
+		addmoney_form = MoneyForm(initial=addmoney_initial)
+	
+	except ValidationError as err_msg:
+		for msg in err_msg:
+			messages.add_message(request, messages.ERROR, str(msg))
 	
 	create_transaction_modals = [
 		{
@@ -72,7 +93,8 @@ def transactions_view(request):
 			'p_btn_type': 'primary',
 			's_btn_txt': 'Cancel',
 			's_btn_type': 'secondary',
-			# 'form': 'django-form-variable-name',
+			'form': addmoney_form,
+			'submit_url_name': 'moneyadd',
 		},
 		{
 			'modal_id': 'issueBookModal',
@@ -81,13 +103,14 @@ def transactions_view(request):
 			'p_btn_type': 'primary',
 			's_btn_txt': 'Cancel',
 			's_btn_type': 'secondary',
-			# 'form': 'django-form-variable-name',
+			'submit_url_name': 'bookissue',		
+			'form': issuebook_form,
 		},
 	]
 	
 	filters = handle_filters(request, fields)
 	fieldlist = [ field['field_name'] for field in fields ]
-	transactions = Transaction.objects.filter(**filters).values(*fieldlist)
+	transactions = Transaction.objects.filter(library=request.user.library, **filters).values(*fieldlist)
 
 	data = handle_data( fields, transactions)
 
@@ -99,7 +122,14 @@ def transactiondetail_view(request, id):
 
 	page = {
 		'title': 'Transaction Detail',
-		'buttons': []
+		'buttons': [
+			{
+				'btn_text':'back',
+				'button_action': "redirect",
+				'url_name': f'transactions',
+				'css_btn_type': 'light',
+			},
+		]
 	}
 
 
@@ -158,19 +188,9 @@ def transactiondetail_view(request, id):
 
 	fieldlist = [ field['field_name'] for field in fields ]
 
-	transaction = Transaction.objects.filter(created_by__library=request.user.library, id=id).values(*fieldlist)
+	transaction = Transaction.objects.filter(library=request.user.library, id=id).values(*fieldlist)
 
-	if not transaction[0]['is_return']:
-
-		page['buttons'].append(
-			{
-				'btn_text':'back',
-				'button_action': "redirect",
-				'url_name': f'transactions',
-				'css_btn_type': 'light',
-			}
-		)
-
+	if transaction[0]['is_return'] or transaction[0]['is_lost']:
 		page['buttons'].append(
 			{
 				'btn_text':'Delete',
@@ -179,9 +199,11 @@ def transactiondetail_view(request, id):
 				'obj_url_id': id,
 				'method': 'POST',
 				'css_btn_type': 'danger',
-			},
+			}
 		)
 
+	if not transaction[0]['is_return']:
+		
 		page['buttons'].append(
 			{
 				'btn_text':'Return',
@@ -193,26 +215,6 @@ def transactiondetail_view(request, id):
 		)
 
 	if not transaction[0]['is_lost']:
-
-		page['buttons'].append(
-			{
-				'btn_text':'back',
-				'button_action': "redirect",
-				'url_name': f'transactions',
-				'css_btn_type': 'light',
-			}
-		)
-
-		page['buttons'].append(
-			{
-				'btn_text':'Delete',
-				'button_action': 'post_form',
-				'url_name': f'transactiondelete',
-				'obj_url_id': id,
-				'method': 'POST',
-				'css_btn_type': 'danger',
-			},
-		)
 
 		page['buttons'].append(
 			{
@@ -247,12 +249,57 @@ def transactiondelete_view(request, id):
 
 
 @login_required
+def moneyadd_view(request):
+	addmoney_initial = {
+			'library': request.user.library,
+			'created_by': request.user,
+			'is_add_balance': True
+		}
+
+	if request.method == "POST":
+		form = MoneyForm(request.POST or None, initial=addmoney_initial)
+
+		if form.is_valid():
+			form.save()
+			messages.add_message(request, messages.SUCCESS, f" Money Added ")
+			return redirect('members')
+	
+		if form.is_bound:
+			return render(request, 'library/page_edit.html', {'form': form})
+	
+	messages.add_message(request, messages.ERROR, "Woah, You visited add Transaction page! you shouldn't do that.")
+	return redirect('members')
+
+
+@login_required
 def bookissue_view(request):
-	if request.method == 'POST':
-		messages.add_message(request, messages.SUCCESS, f"You have issued book")
-		return redirect('transactions') 
-	messages.add_message(request, messages.ERROR, "Woah, You visited issue book page! you shouldn't do that.")
-	return redirect('transactions') 
+
+	if request.method == "GET":	
+		messages.add_message(request, messages.ERROR, "Woah, You visited add Transaction page! you shouldn't do that.")
+		return redirect('transactions')
+	
+	initial = {
+		'library': request.user.library,
+		'created_by': request.user,
+	}
+
+	if request.method == "POST":
+		try:
+			form = IssueBookForm(request.POST or None, initial=initial)
+
+			if form.is_valid():
+				form.save()
+				messages.add_message(request, messages.SUCCESS, f"Book has Issued Successfully ")
+				return redirect('transactions')
+		
+			if form.is_bound:
+				return render(request, 'library/page_edit.html', {'form': form})
+	
+		except ValidationError as err_msg:
+			for msg in err_msg:
+				messages.add_message(request, messages.ERROR, str(msg))
+	
+	return redirect('transactions')
 
 @login_required
 def bookreturn_view(request, id):

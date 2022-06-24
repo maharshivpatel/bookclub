@@ -37,7 +37,7 @@ class LibrarianUpdateForm(forms.ModelForm):
 		fields =   ['first_name', 'last_name', 'profile_pic', 'email', 'library']
 
 
-class LibraryCreationForm(forms.ModelForm):
+class LibraryForm(forms.ModelForm):
 	
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)

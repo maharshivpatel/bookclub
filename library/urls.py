@@ -8,5 +8,6 @@ urlpatterns = [
     path('select-library/', views.libraryselect_view, name="libraryselect"),
     path('create-library/', views.librarycreate_view, name="librarycreate"),
     path('profile/', views.profile_view, name="profile"),
+    path('library/', views.library_view, name="library"),
     path('logout/', views.logout_view, name="logout"),
 ]

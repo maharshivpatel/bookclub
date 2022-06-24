@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from library.models import Library, Librarian
-from library.forms import LibrarianCreationForm, LibrarianLoginForm, LibraryCreationForm, LibrarySelectForm, LibrarianUpdateForm
+from library.forms import LibrarianCreationForm, LibrarianLoginForm, LibraryForm, LibrarySelectForm, LibrarianUpdateForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -47,7 +47,6 @@ def usercreate_view(request):
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=user.username, password=raw_password)
             login(request, user)
-            messages.add_message(request, messages.INFO, 'Please create Library to continue')
             return redirect('librarycreate')
     else:
         form = LibrarianCreationForm()
@@ -112,7 +111,7 @@ def librarycreate_view(request):
 
     if request.method == 'POST':
         
-        form = LibraryCreationForm(request.POST)
+        form = LibraryForm(request.POST)
         
         if form.is_valid():
             
@@ -125,7 +124,7 @@ def librarycreate_view(request):
         return render(request, 'library/guest_flow.html', {'guest': guest, 'form': form})
 
     else:
-        form = LibraryCreationForm()
+        form = LibraryForm()
 
     messages.add_message(request, messages.INFO, 'Please enter details to create Library')
 
@@ -183,6 +182,31 @@ def profile_view(request):
     librarian = Librarian.objects.get(id = request.user.id)
 
     form = LibrarianUpdateForm(request.POST or None, request.FILES or None, instance=librarian)
+    
+    if form.is_valid():
+        form.save()
+        messages.add_message(request, messages.SUCCESS, 'Information Saved.')
+    
+        return redirect('books')
+
+    return render(request, 'library/page_edit.html', {'page': page, 'form': form})
+
+
+@login_required
+def library_view(request):
+    page = {
+        'title': 'Library',
+        'button': {
+            'btn_text':'Back',
+            'button_action': "redirect",
+            'url_name': 'books',
+            'css_btn_type': 'light',
+        }
+    }
+
+    library = Library.objects.get(id = request.user.library.id)
+
+    form = LibraryForm(request.POST or None, request.FILES or None, instance=library)
     
     if form.is_valid():
         form.save()

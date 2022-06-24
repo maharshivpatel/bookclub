@@ -1,5 +1,5 @@
 from django.dispatch import receiver
-from django.db.models.signals import pre_save, post_save, post_delete
+from django.db.models.signals import pre_save, post_save, pre_delete
 from transactions.models import Transaction, WalletTransacton
 from django.utils.timezone import now
 from django.core.exceptions import ValidationError
@@ -104,9 +104,9 @@ def after_transaction_save(instance, **kwargs):
 		and instance.pk
 	):
 		if (
-                	instance.is_return != instance.initial_is_return
-                and	instance.is_lost != instance.initial_is_lost
-            ):
+					instance.is_return != instance.initial_is_return
+				and	instance.is_lost != instance.initial_is_lost
+			):
 				last_wallet_trans = (
 					WalletTransacton.objects.filter(
 						transaction_id=instance.id
@@ -139,6 +139,19 @@ def before_wallet_transaction_save(instance, **kwargs):
 		instance.member.wallet.balance = instance.balance_before + instance.trans_amount
 		instance.balance_after = instance.member.wallet.balance
 		instance.member.wallet.save()
+	
+		if not instance.note:
+			note = instance.member.full_name
+			note += ' has'
+			note += ' returned ' if instance.transaction.is_return else ''
+			note += ' lost ' if instance.transaction.is_lost else ''
+			note += ' book ' + instance.transaction.book.title + ', '
+			note += str(str(instance.trans_amount) if instance.trans_amount > 0 else str(-instance.trans_amount) )
+			note += ' rupees have been '
+			note += 'added' if instance.trans_amount > 0 else 'deducted'
+			note += ' from their wallet.'
+			note += ' Balance after transaction is ' + str(instance.balance_after)
+			instance.note = note
 
 	elif (
 		not instance.pk
@@ -149,12 +162,20 @@ def before_wallet_transaction_save(instance, **kwargs):
 		instance.balance_after = instance.member.wallet.balance
 		instance.member.wallet.save()
 
+		if not instance.note:
+			note = str(str(instance.trans_amount) if instance.trans_amount > 0 else str(-instance.trans_amount) )
+			note += ' rupees have been '
+			note += 'added' if instance.trans_amount > 0 else 'deducted'
+			note += ' to ' + instance.member.full_name
+			note += '\'s Wallet '
+			note += 'by ' + str(instance.created_by.username)
+			instance.note = note
+
 	else:
 		# safegaurd
 		raise ValidationError('You can\'t edit Wallet Transaction')
 
-@receiver(post_delete, sender=WalletTransacton)
-def after_wallet_transaction_delete(instance, **kwargs):
-
+@receiver(pre_delete, sender=WalletTransacton)
+def before_wallet_transaction_delete(instance, **kwargs):
 	instance.member.wallet.balance -= instance.trans_amount
 	instance.member.wallet.save()

@@ -146,7 +146,7 @@ def before_wallet_transaction_save(instance, **kwargs):
 			note += ' has'
 			note += ' returned ' if instance.transaction.is_return else ''
 			note += ' lost ' if instance.transaction.is_lost else ''
-			note += ' book ' + instance.transaction.book.title + ', '
+			note += ' book " ' + instance.transaction.book.title + ' ", '
 			note += str(str(instance.trans_amount) if instance.trans_amount > 0 else str(-instance.trans_amount) )
 			note += ' rupees have been '
 			note += 'added' if instance.trans_amount > 0 else 'deducted'

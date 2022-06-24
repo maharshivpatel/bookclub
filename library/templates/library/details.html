@@ -3,22 +3,34 @@
 {% block content %}
 <div class="container bg-white border detail-container rounded-3 shadow-sm mx-3">
     <div class="row text-start ">
-    {% if book_image_url %}
-    <div class="mt-2 py-3 col-4 align-self-center">
-        <img src="{{book_image_url}}" width="100%" alt="" class="p-3">
-    </div>
-    {% else %}
-    <div class="col-2"></div>
-    {% endif %}
-    <div class="row my-2 py-3 col-8">
-    {% for data in data.0 %}
-                <div class="col-{% if data.col_span %}{{data.col_span}}{% else %}4{% endif %}  border-bottom border-secondary">
-                    <p class="label mt-3 pt-3 text-muted">{{ data.title }}{{css_class}}</p>
-                    <p class="h5 mb-2 pb-3{% if data.css_class %} {{data.css_class}} {% endif %}" {% if data.html_attr %} {{data.html_attr}} {% endif %}>{{ data.value }}</p>
-                </div>
-                {% endfor %}
+        {% if book_image_url %}
+        <div class="mt-2 py-3 col-4 align-self-center">
+            <img src="{{book_image_url}}" width="100%" alt="" class="p-3">
+        </div>
+        {% else %}
+        <div class="col-2"></div>
+        {% endif %}
+        <div class="row my-2 py-3 col-8">
+            {% for data in data.0 %}
+            <div
+                class="col-{% if data.col_span %}{{data.col_span}}{% else %}4{% endif %}  border-bottom border-secondary">
+                <p class="label mt-3 pt-3 text-muted">{{ data.title }}</p>
+                <p class="h5 mb-2 pb-3{% if data.css_class %} {{data.css_class}} {% endif %}" {% if data.html_attr %}
+                    {{data.html_attr}} {% endif %}>{{ data.value }}</p>
             </div>
-
-</div>
-{% include 'library/modalforms.html' %}
-{% endblock %}
+            {% endfor %}
+        </div>
+        {% if wallet_trans %}
+        <div class="row my-5 mx-auto col-10">
+            {% for data in wallet_trans %}
+            <div class="card p-3 my-2 shadow-sm">
+                <div class="card-body">
+                  {{data.note}}
+                </div>
+              </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    {% include 'library/modalforms.html' %}
+    {% endblock %}

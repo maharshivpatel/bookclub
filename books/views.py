@@ -1,4 +1,7 @@
+from django.shortcuts import get_object_or_404
 from books.models import Book
+from books.forms import BookForm
+from django.core.exceptions import ValidationError
 from bookclub.utils import handle_data, handle_filters
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
@@ -52,7 +55,7 @@ def books_view(request):
 
 
 	filters = handle_filters(request, fields)
-	books = Book.objects.filter(**filters).values()
+	books = Book.objects.filter(library=request.user.library, **filters).values()
 
 	data = handle_data(fields, books)
 
@@ -157,14 +160,18 @@ def booksdetail_view(request, id):
 	]
 
 	list_of_fields = [ field['field_name'] for field in fields ]
-	books = Book.objects.filter(library=request.user.library, id=id).values(*list_of_fields)
+	book = Book.objects.filter(library=request.user.library, id=id).values(*list_of_fields)
 	
-	isbn =  books[0]['isbn10']
+	if len(book) == 0:
+		messages.add_message(request, messages.WARNING, f"Detail Page for this book doesn't exist or you don't have access to it.")
+		return redirect('books')
+
+	isbn =  book[0]['isbn10']
 	book_image_url = get_cover_from_api(
 		f'http://covers.openlibrary.org/b/isbn/{isbn}-M.jpg'
 		)
 
-	data = handle_data(fields, books)
+	data = handle_data(fields, book)
 
 
 	return render(request, 'library/details.html', {'page': page, 'fields': fields, 'book_image_url': book_image_url, 'data': data })
@@ -189,8 +196,22 @@ def bookadd_view(request):
 		]
 	}
 
+	initial = {
+		'library': request.user.library,
+		}
+	form = BookForm(initial=initial)
 
-	return render(request, 'library/add_edit.html', { 'page': page}) 
+	if request.method == "POST":
+	
+		form = BookForm(request.POST or None, initial=initial)
+		form.created_by = request.user
+		form.library = request.user.library
+	
+		if form.is_valid():
+			form.save()
+			return redirect('books')
+
+	return render(request, 'library/add_edit.html', { 'page': page, 'form': form  }) 
 
 
 @login_required
@@ -212,15 +233,35 @@ def bookedit_view(request, id):
 			}
 		]
 	}
-	return render(request, 'library/add_edit.html', { 'page': page }) 
+	
+	book = get_object_or_404(Book.objects.filter(library=request.user.library, id=id))
+
+	form = BookForm(request.POST or None, instance=book)
+
+	if request.method == 'POST':
+
+		if form.is_valid():
+			form.save()
+			messages.add_message(request, messages.SUCCESS, f"{book.title} edited Successfully.")
+			return redirect('bookdetail', id=id)
+		
+		elif form.is_bound:
+			messages.add_message(request, messages.ERROR, f"Error while editing {book.title} ")
+
+	return render(request, 'library/add_edit.html', { 'page': page, 'form': form }) 
 
 
 @login_required
 def bookdelete_view(request, id):
-	if request.method == 'POST':
-		book = Book.objects.get(id=id, library = request.user.library)
-		book.delete()
-		messages.add_message(request, messages.SUCCESS, f"{book.title} was deleted Successfully.")
-		return redirect('books') 
-	messages.add_message(request, messages.ERROR, "Woah, You visited delete page! you shouldn't do that. ")
-	return redirect('booksdetail', id=id) 
+	try:
+		if request.method == 'POST':
+			book = get_object_or_404(Book.objects.filter(library=request.user.library, id=id))
+			book.delete()
+			messages.add_message(request, messages.SUCCESS, f"{book.title} was deleted Successfully.")
+			return redirect('books') 
+		messages.add_message(request, messages.ERROR, "Woah, You visited delete page! you shouldn't do that. ")
+		return redirect('bookdetail', id=id)
+	except ValidationError as err_msg:
+		for msg in err_msg:
+			messages.add_message(request, messages.ERROR, str(msg))
+	return redirect('bookdetail', id=id)

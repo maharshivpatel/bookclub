@@ -111,7 +111,7 @@ def after_transaction_save(instance, **kwargs):
 				last_wallet_trans = (
 					WalletTransacton.objects.filter(
 						transaction_id=instance.id
-					).last()
+					).first()
 				)
 				orignal_trans = Transaction.objects.get( id=instance.id )
 

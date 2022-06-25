@@ -1,14 +1,16 @@
+from decimal import Decimal
 import json, random
 from django.shortcuts import get_object_or_404
+from transactions.models import Transaction
 from books.models import Book, Author, Publisher
 from books.forms import BookForm
 from django.core.exceptions import ValidationError
-from bookclub.utils import handle_data, handle_filters, request_data_from_api
+from bookclub.utils import handle_data, handle_filters, request_data_from_api, get_cover_from_api
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from bookclub.utils import get_cover_from_api
 from datetime import datetime
+import humanize
 
 @login_required
 def books_view(request):
@@ -170,6 +172,34 @@ def booksdetail_view(request, id):
 	fieldlist = [ field['field_name'] for field in fields ]
 	book = Book.objects.filter(library=request.user.library, id=id).values(*fieldlist)
 
+	rented_book_fields = ['member__full_name', 'issue_date', 'return_date', 'trans_amount']
+	book_rented_by = Transaction.objects.filter(library=request.user.library, id=id).values_list(*rented_book_fields)
+	
+	rented_data = [
+			[	
+				"Not Available"
+				if	field is None
+
+				else	str(humanize.naturalday(field))
+				if	isinstance(field, datetime)
+				
+				else	'₹ ' + str(field)
+				if isinstance(field, Decimal)
+				
+				else	str(field)
+				
+				for field in trans
+			]
+		for trans in book_rented_by
+		]
+
+	related_table = [
+		{
+			'header': ['Member Name', 'Issue Date', 'Return Date', 'Trans Amount'],
+			'body': rented_data
+		},
+	]
+
 	if len(book) == 0:
 		messages.add_message(request, messages.WARNING, f"Detail Page for this book doesn't exist or you don't have access to it.")
 		return redirect('books')
@@ -182,7 +212,7 @@ def booksdetail_view(request, id):
 	data = handle_data(fields, book)
 
 
-	return render(request, 'library/details.html', {'page': page, 'fields': fields, 'book_image_url': book_image_url, 'data': data })
+	return render(request, 'library/details.html', {'page': page, 'fields': fields, 'book_image_url': book_image_url, 'data': data, 'related_table': related_table })
 
 
 @login_required

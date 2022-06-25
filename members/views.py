@@ -140,7 +140,7 @@ def membersdetail_view(request, id):
 
 	member = get_object_or_404(Member.objects.filter(library = request.user.library, id=id))
 
-	wallet_trans = list(WalletTransacton.objects.filter(member_id=id).values('note'))
+	notes = list(WalletTransacton.objects.filter(member_id=id).values('note'))
 
 	form = MemberForm(request.POST or None, instance=member)
 
@@ -168,7 +168,7 @@ def membersdetail_view(request, id):
 
 	data = handle_data( fields, member)
 
-	return render(request, 'library/details.html', {'page': page, 'fields': fields, 'data': data, 'modals': edit_member_modal, 'wallet_trans': wallet_trans })
+	return render(request, 'library/details.html', {'page': page, 'fields': fields, 'data': data, 'modals': edit_member_modal, 'notes': notes })
 
 
 @login_required

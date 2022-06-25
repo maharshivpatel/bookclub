@@ -1,0 +1,22 @@
+<div class="row my-5 mx-auto col-10 border border-1">
+    {% for data in related_table %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+            {% for header in data.header %}
+                <th scope="col">{{header}}</th>
+            {% endfor %}  
+        </tr>
+        </thead>
+        <tbody>
+        {% for body in data.body %}
+          <tr>
+            {% for cell in body %}
+                <td>{{cell}}</td>
+            {% endfor %} 
+        </tr>
+        {% endfor %} 
+        </tbody>
+      </table>
+    {% endfor %}
+</div>

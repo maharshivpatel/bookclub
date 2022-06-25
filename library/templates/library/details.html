@@ -20,16 +20,11 @@
             </div>
             {% endfor %}
         </div>
-        {% if wallet_trans %}
-        <div class="row my-5 mx-auto col-10">
-            {% for data in wallet_trans %}
-            <div class="card p-3 my-2 shadow-sm">
-                <div class="card-body">
-                    {{data.note}}
-                </div>
-            </div>
-            {% endfor %}
-        </div>
+        {% if notes %}
+            {% include './notes.html' %}
+        {% endif %}
+        {% if related_table %}
+            {% include './related_table.html' %}
         {% endif %}
     </div>
     {% include 'library/modalforms.html' %}

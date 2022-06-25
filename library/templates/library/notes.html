@@ -1,0 +1,9 @@
+<div class="row my-5 mx-auto col-10">
+    {% for data in notes %}
+    <div class="card p-3 my-2 shadow-sm">
+        <div class="card-body">
+            {{data.note}}
+        </div>
+    </div>
+    {% endfor %}
+</div>

@@ -115,5 +115,7 @@ def request_data_from_api(url: str, reqtype: str, params: list[dict]):
 	url = url
 	reqtype = reqtype
 	response = rq.request(reqtype, url, params=params)
-	data = response.json()
+	data = {}
+	if response.ok:
+		data = response.json()
 	return data

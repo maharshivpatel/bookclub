@@ -199,7 +199,6 @@ def booksdetail_view(request, id):
 			'body': rented_data
 		},
 	]
-	print(related_table)
 
 	if len(book) == 0:
 		messages.add_message(request, messages.WARNING, f"Detail Page for this book doesn't exist or you don't have access to it.")

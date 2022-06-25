@@ -173,7 +173,7 @@ def booksdetail_view(request, id):
 	book = Book.objects.filter(library=request.user.library, id=id).values(*fieldlist)
 
 	rented_book_fields = ['member__full_name', 'issue_date', 'return_date', 'trans_amount']
-	book_rented_by = Transaction.objects.filter(library=request.user.library, id=id).values_list(*rented_book_fields)
+	book_rented_by = Transaction.objects.filter(library=request.user.library, book_id=id).values_list(*rented_book_fields)
 	
 	rented_data = [
 			[	

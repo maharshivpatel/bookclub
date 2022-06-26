@@ -1,8 +1,11 @@
 from django.contrib import messages
 from decimal import Decimal
-import datetime
-import humanize
+from datetime import datetime, timedelta
+from humanize import precisedelta, naturaldate
+from django.utils.timezone import make_aware
 import requests as rq
+import parsedatetime
+
 
 def handle_filters(request, fields, extra_filters=False, api=False):
 
@@ -16,13 +19,39 @@ def handle_filters(request, fields, extra_filters=False, api=False):
 
 			field_name = params['field_name']
 			field_title = params['field_title']
+			field_value = request.GET.get(field_name, False)
 
-			if request.GET.get(field_name, False):
-
+			if field_value:
 				if api:
-					filters[f'{field_name}'] =	request.GET.get(field_name)
+					filters[field_name] =	request.GET.get(field_name)
+				
 				else:
-					filters[f'{field_name}__icontains'] =	request.GET.get(field_name)
+					if field_name.endswith('_date'):
+
+						if field_value and field_value.lower() == "not available":
+							filters[f'{field_name}__isnull'] = True
+						
+						else:
+							cal = parsedatetime.Calendar()
+							time_struct, parse_status = cal.parse(field_value)
+							date_filter = make_aware(datetime(*time_struct[:3]))
+
+							if parse_status:
+								filters[f'{field_name}__day'] =	date_filter.day
+							else:
+								messages.add_message(request, messages.ERROR, "Incorrect Date Provided");
+					
+					else:
+						
+						if field_name.startswith('is_'):
+							if	field_value.lower()  == "no":
+								field_value = False
+							elif	field_value.lower() == "yes":
+								field_value = True
+							else:
+								messages.add_message(request, messages.ERROR, "Please Provide value in Yes or No");
+					
+						filters[f'{field_name}__icontains'] =	field_value
 				
 				params['field_value'] = request.GET.get(field_name)
 				
@@ -56,9 +85,20 @@ def handle_data(fields, obj):
 					
 					if	datalist[x['field_name']] is None
 
-					else	str(humanize.naturalday(datalist[x['field_name']]))
+					else	str(naturaldate(datalist[x['field_name']]))
 					
-					if		isinstance(datalist[x['field_name']], datetime.datetime )
+					if		isinstance(datalist[x['field_name']], datetime )
+
+					else	str(
+								precisedelta(
+									datalist[x['field_name']],
+									minimum_unit='minutes',
+									format="%0.0f"
+								)
+						)
+					
+					
+					if		isinstance(datalist[x['field_name']], timedelta )
 					
 					else	'₹ ' + str(datalist[x['field_name']])
 
@@ -116,6 +156,8 @@ def request_data_from_api(url: str, reqtype: str, params: list[dict]):
 	reqtype = reqtype
 	response = rq.request(reqtype, url, params=params)
 	data = {}
-	if response.ok:
+	try:
 		data = response.json()
+	except:
+		pass
 	return data

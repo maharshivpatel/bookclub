@@ -26,6 +26,9 @@ gunicorn==20.1.0
 # Better Formatting for date & time fields
 humanize==4.2.0
 
+# make date & time machine readable from human input (parse datetime)
+parsedatetime==2.6
+
 # PostgreSQL database adapter
 psycopg2-binary==2.9.3
 

@@ -1,0 +1,69 @@
+{
+    "page" : {
+		"title": "Transaction Detail",
+		"buttons": [
+			{
+				"btn_text":"back",
+				"button_action": "redirect",
+				"url_name": "transactions",
+				"css_btn_type": "light"
+			}
+		]
+	},
+    "fields" : [
+		{
+			"field_name": "id",
+			"field_title": "TRANS ID",
+			"col_span": 2
+		},
+		{
+			"field_name": "book__title",
+			"field_title": "Book Title",
+			"col_span": 10
+		},
+		{
+			"field_name": "member__full_name",
+			"field_title": "Members"
+		},
+		{
+			"field_name": "member__wallet__balance",
+			"field_title": "Member\"s Balance",
+			"css_class": "text-success currency-pn"
+		},
+		{
+			"field_name": "trans_amount",
+			"field_title": "Transaction Amount",
+			"css_class": "text-primary currency"
+		},
+		{
+			"field_name": "book__isbn10",
+			"field_title": "Book ISBN"
+		},
+		{
+			"field_name": "is_return",
+			"field_title": "Is Return"
+		},
+		{
+			"field_name": "is_lost",
+			"field_title": "Is Lost"
+		},
+		{
+			"field_name": "issue_date",
+			"field_title": "Issue Date"
+		},
+		{
+			"field_name": "return_date",
+			"field_title": "Return Date"
+		},
+		{
+			"field_name": "duration",
+			"field_title": "Duration"
+		}
+	],
+    "related_table" : [
+        {
+            "fields" : [ "created", "balance_before", "trans_amount", "balance_after"],
+            "header" : [ "Created", "Balance Before", "Amount", "Balance After"]
+        }
+    ]
+}

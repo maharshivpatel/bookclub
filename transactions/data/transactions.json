@@ -1,0 +1,80 @@
+{
+    "page" : {
+        "title": "Transactions",
+        "buttons": [
+            {
+            "btn_text":"Add Money",
+            "button_action": "openmodal",
+            "modal_target": "addMoneyModal",
+            "css_btn_type": "success"
+            },
+            {
+            "btn_text":"Issue Book",
+            "button_action": "openmodal",
+            "modal_target": "issueBookModal",
+            "css_btn_type": "primary"
+            }
+        ]
+    },
+    "fields" : [
+		{
+			"field_name": "id",
+			"field_title": "ID",
+			"url_prefix": "details",
+			"html_attr": "hidden"
+		},
+		{
+			"field_name": "member__full_name",
+			"field_title": "Members",
+			"url_prefix": "details",
+			"html_attr": "autofocus"
+		},
+		{
+			"field_name": "trans_amount",
+			"field_title": "Amount",
+			"css_class": "fw-bold currency-pn"
+		},
+		{
+			"field_name": "book__title",
+			"field_title": "Book"
+		},
+		{
+			"field_name": "is_return",
+			"field_title": "Is Return"
+		},
+		{
+			"field_name": "is_lost",
+			"field_title": "Is Lost"
+		},
+		{
+			"field_name": "issue_date",
+			"field_title": "Issue Date"
+		},
+		{
+			"field_name": "return_date",
+			"field_title": "Return Date"
+		}
+	],
+	"modals" : [
+		{
+			"modal_id": "addMoneyModal",
+			"modal_title": "Add Money",
+			"p_btn_txt": "Add",
+			"p_btn_type": "primary",
+			"s_btn_txt": "Cancel",
+			"s_btn_type": "secondary",
+			"form": "moneyadd_form",
+			"submit_url_name": "moneyadd"
+		},
+		{
+			"modal_id": "issueBookModal",
+			"modal_title": "Issue Book",
+			"p_btn_txt": "Issue",
+			"p_btn_type": "primary",
+			"s_btn_txt": "Cancel",
+			"s_btn_type": "secondary",
+			"submit_url_name": "bookissue",		
+			"form": "bookissue_form"
+		}
+	]
+}

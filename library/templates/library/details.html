@@ -20,11 +20,11 @@
             </div>
             {% endfor %}
         </div>
+        {% if related_table %}
+        {% include './related_table.html' %}
+        {% endif %}
         {% if notes %}
             {% include './notes.html' %}
-        {% endif %}
-        {% if related_table %}
-            {% include './related_table.html' %}
         {% endif %}
     </div>
     {% include 'library/modalforms.html' %}

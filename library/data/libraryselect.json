@@ -1,0 +1,7 @@
+{
+    "guest" : {
+        "p_btn_txt": "Select",
+        "s_btn_txt": "create library",
+        "s_url_name": "librarycreate"
+    }
+}

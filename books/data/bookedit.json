@@ -1,0 +1,19 @@
+{
+    "page" : {
+		"title": "Book Detail",
+		"buttons": [
+			{
+			"btn_text":"Cancel",
+			"button_action": "redirect",
+			"url_name": "bookdetail",
+			"obj_url_id": "id",
+			"css_btn_type": "secondary"
+			},
+			{
+			"btn_text":"Update",
+			"button_action": "submit",
+			"css_btn_type": "primary"
+			}
+		]
+	}
+}

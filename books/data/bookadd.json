@@ -1,0 +1,18 @@
+{
+    "page" : {
+		"title": "Add Book",
+		"buttons": [
+			{
+			"btn_text":"Cancel",
+			"url_name": "books",
+			"button_action": "redirect",
+			"css_btn_type": "secondary"
+			},
+			{
+			"btn_text":"Save",
+			"button_action": "submit",
+			"css_btn_type": "primary"
+			}
+		]
+	}
+}

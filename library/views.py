@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from library.models import Library, Librarian
+from bookclub.utils import load_json
 from library.forms import LibrarianCreationForm, LibrarianLoginForm, LibraryForm, LibrarySelectForm, LibrarianUpdateForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -10,7 +11,6 @@ from django.contrib.auth.decorators import login_required
 def guest_view(request):
 
     if Library.objects.count() == 0 and Librarian.objects.count() == 0:
-        messages.add_message(request, messages.SUCCESS, 'Start setup for your Library')
         return redirect('usercreate')
 
     if request.user.is_anonymous:
@@ -28,11 +28,7 @@ def guest_view(request):
 
 def usercreate_view(request):
 
-    guest = {
-      'p_btn_txt': 'Create',
-      's_btn_txt': 'login',
-      's_url_name': 'userlogin'
-    }
+    pagedata = load_json(folder='library',file='usercreate')
 
     if request.user.is_authenticated:
         messages.add_message(request, messages.INFO, 'You are already logged in as user.')
@@ -52,16 +48,12 @@ def usercreate_view(request):
         form = LibrarianCreationForm()
 
     messages.add_message(request, messages.INFO, 'Please create user to continue')
-    return render(request, 'library/guest_flow.html',  {'guest': guest, 'form': form})
+    return render(request, 'library/guest_flow.html',  {**pagedata, 'form': form})
 
 
 def userlogin_view(request):
 
-    guest = {
-      'p_btn_txt': 'Login',
-      's_btn_txt': 'create user',
-      's_url_name': 'usercreate'
-    }
+    pagedata = load_json(folder='library',file='userlogin')
 
     if request.user.is_authenticated:
         messages.add_message(request, messages.INFO, 'You are already logged in as user.')
@@ -88,22 +80,18 @@ def userlogin_view(request):
 
         messages.add_message(request, messages.ERROR, 'Username or Password is Incorrect.')
 
-        return render(request, 'library/guest_flow.html', {'guest': guest, 'form': form})
+        return render(request, 'library/guest_flow.html', {**pagedata, 'form': form})
 
     else:
         messages.add_message(request, messages.INFO, 'Please Login to continue')
         form = LibrarianLoginForm()
 
-    return render(request, 'library/guest_flow.html', {'guest': guest, 'form': form})
+    return render(request, 'library/guest_flow.html', {**pagedata, 'form': form})
 
 
 def librarycreate_view(request):
 
-    guest = {
-      'p_btn_txt': 'Create',
-      's_btn_txt': 'select library',
-      's_url_name': 'libraryselect'
-    }
+    pagedata = load_json(folder='library',file='librarycreate')
 
     if request.user.library:
         messages.add_message(request, messages.INFO, f'You are already a librarian at {request.user.library}.')
@@ -121,23 +109,19 @@ def librarycreate_view(request):
             
             return redirect('books')
 
-        return render(request, 'library/guest_flow.html', {'guest': guest, 'form': form})
+        return render(request, 'library/guest_flow.html', {**pagedata, 'form': form})
 
     else:
         form = LibraryForm()
 
     messages.add_message(request, messages.INFO, 'Please enter details to create Library')
 
-    return render(request, 'library/guest_flow.html',  {'guest': guest, 'form': form} )
+    return render(request, 'library/guest_flow.html',  {**pagedata, 'form': form} )
 
 
 def libraryselect_view(request):
 
-    guest = {
-      'p_btn_txt': 'Select',
-      's_btn_txt': 'create library',
-      's_url_name': 'librarycreate'
-    }
+    pagedata = load_json(folder='library', file='libraryselect')
 
     if request.user.library:
         messages.add_message(request, messages.INFO, f'You are already a librarian at {request.user.library}.')
@@ -159,25 +143,19 @@ def libraryselect_view(request):
         
         messages.add_message(request, messages.WARNING, 'Please Select your Library.')
         
-        return render(request, 'library/guest_flow.html', {'guest': guest, 'form': form} )
+        return render(request, 'library/guest_flow.html', {**pagedata, 'form': form} )
 
     else:
         form = LibrarySelectForm()
         messages.add_message(request, messages.SUCCESS, 'Please Select your Library.')
 
-    return render(request, 'library/guest_flow.html', {'guest': guest, 'form': form} )
+    return render(request, 'library/guest_flow.html', {**pagedata, 'form': form} )
+
 
 @login_required
 def profile_view(request):
-    page = {
-        'title': 'Profile',
-        'button': {
-            'btn_text':'Back',
-            'button_action': "redirect",
-            'url_name': 'transactions',
-            'css_btn_type': 'light',
-        }
-    }
+    
+    pagedata = load_json(folder='library',file='profile')
 
     librarian = Librarian.objects.get(id = request.user.id)
 
@@ -189,20 +167,13 @@ def profile_view(request):
     
         return redirect('books')
 
-    return render(request, 'library/page_edit.html', {'page': page, 'form': form})
+    return render(request, 'library/page_edit.html', {**pagedata, 'form': form})
 
 
 @login_required
 def library_view(request):
-    page = {
-        'title': 'Library',
-        'button': {
-            'btn_text':'Back',
-            'button_action': "redirect",
-            'url_name': 'books',
-            'css_btn_type': 'light',
-        }
-    }
+
+    pagedata = load_json(folder='library',file='library')
 
     library = Library.objects.get(id = request.user.library.id)
 
@@ -214,7 +185,7 @@ def library_view(request):
     
         return redirect('books')
 
-    return render(request, 'library/page_edit.html', {'page': page, 'form': form})
+    return render(request, 'library/page_edit.html', {**pagedata, 'form': form})
 
 
 def logout_view(request):

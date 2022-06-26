@@ -1,0 +1,61 @@
+{
+
+    "page": {
+
+        "title": "Members",
+		"buttons": [
+			{
+				"btn_text":"Back",
+				"button_action": "redirect",
+				"url_name": "members",
+				"css_btn_type": "link"
+			},
+			{
+				"btn_text":"Edit",
+				"button_action": "openmodal",
+				"modal_target": "editMemberModal"
+			},
+			{
+				"btn_text":"Delete",
+				"url_name": "membersdelete",
+				"obj_url_id": "id",
+				"button_action": "post_form",
+				"css_btn_type": "danger"
+			}
+		]
+	},
+    "fields" : [
+		{
+			"field_name": "full_name",
+			"field_title": "Full Name"
+		},
+		{
+			"field_name": "wallet__balance",
+			"field_title": "Balance / Due",
+			"css_class": "text-success currency-pn"
+		},
+		{
+			"field_name": "phone_number",
+			"field_title": "Phone Number"
+		}
+	],
+    "modals" : [
+		{
+			"modal_id": "editMemberModal",
+			"modal_title": "Edit Member Details",
+			"p_btn_txt": "Update",
+			"p_btn_type": "primary",
+			"s_btn_txt": "Cancel",
+			"s_btn_type": "secondary",
+			"submit_url_name": "membersedit",
+			"obj_url_id": "id",
+			"form": "memberedit_form"
+		}
+	],
+    "related_table" : [
+        {
+            "fields" : ["book__title", "issue_date", "return_date", "is_lost", "trans_amount"],
+            "header" : ["Book Title", "Issue Date", "Return Date", "Is Lost", "Amount"]
+        }
+    ]
+}

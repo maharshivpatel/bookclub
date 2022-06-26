@@ -1,0 +1,50 @@
+{
+    "page" : {
+		"title": "Import Books",
+		"buttons": [
+			{
+			"btn_text":"Cancel",
+			"button_action": "redirect",
+			"url_name": "books",
+			"css_btn_type": "secondary"
+			},
+			{
+			"btn_text":"Import",
+			"button_action": "submit",
+			"css_btn_type": "success"
+			}
+		]
+	},
+    "fields" : [
+		{
+			"field_name": "bookID",
+			"field_title": "ID"
+		},
+		{
+			"field_name": "title",
+			"field_title": "Title"
+		},
+		{
+			"field_name": "authors",
+			"field_title": "Authors"
+		},
+		{
+			"field_name": "publisher",
+			"field_title": "Publishers"
+		},
+		{
+			"field_name": "isbn",
+			"field_title": "ISBN 10"
+		},
+		{
+			"field_name": "isbn13",
+			"field_title": "ISBN 13"
+		}
+	],
+    "extra_filters" :[
+        {
+        "field_name": "page",
+        "field_title": "Page No"
+        }
+    ]
+}

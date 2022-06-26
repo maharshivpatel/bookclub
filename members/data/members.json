@@ -1,0 +1,66 @@
+{
+  "page": {
+    "title": "Members",
+    "buttons": [
+      {
+        "btn_text": "Add Money",
+        "button_action": "openmodal",
+        "modal_target": "addMoneyModal",
+        "css_btn_type": "success"
+      },
+      {
+        "btn_text": "New Member",
+        "button_action": "openmodal",
+        "modal_target": "createMemberModal",
+        "css_btn_type": "primary"
+      }
+    ]
+  },
+
+
+  "fields": [
+    {
+      "field_name": "id",
+      "field_title": "ID",
+      "html_attr": "hidden"
+    },
+    {
+      "field_name": "full_name",
+      "field_title": "Full Name",
+      "url_prefix": "details",
+      "html_attr": "autofocus"
+    },
+    {
+      "field_name": "phone_number",
+      "field_title": "Phone Number"
+    },
+    {
+      "field_name": "wallet__balance",
+      "field_title": "Balance / Due",
+      "css_class": "text-success currency-pn"
+    }
+  ],
+
+  "modals" : [
+    {
+        "modal_id": "createMemberModal",
+        "modal_title": "Create New Member",
+        "p_btn_txt": "Create",
+        "p_btn_type": "primary",
+        "s_btn_txt": "Cancel",
+        "s_btn_type": "secondary",
+        "submit_url_name": "memberscreate",
+        "form": "memberadd_form"
+    },
+    {
+        "modal_id": "addMoneyModal",
+        "modal_title": "Add Money",
+        "p_btn_txt": "Add",
+        "p_btn_type": "primary",
+        "s_btn_txt": "Cancel",
+        "s_btn_type": "secondary",
+        "submit_url_name": "moneyadd",
+        "form": "moneyadd_form"
+    }
+  ]
+}

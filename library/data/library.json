@@ -1,0 +1,11 @@
+{
+    "page" : {
+        "title": "Library",
+        "button": {
+            "btn_text":"Back",
+            "button_action": "redirect",
+            "url_name": "books",
+            "css_btn_type": "light"
+        }
+    }
+}

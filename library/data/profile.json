@@ -1,0 +1,11 @@
+{
+    "page" : {
+        "title": "Profile",
+        "button": {
+            "btn_text":"Back",
+            "button_action": "redirect",
+            "url_name": "transactions",
+            "css_btn_type": "light"
+        }
+    }
+}

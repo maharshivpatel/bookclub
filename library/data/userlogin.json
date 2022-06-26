@@ -1,0 +1,7 @@
+{
+    "guest" : {
+    "p_btn_txt": "Login",
+    "s_btn_txt": "create user",
+    "s_url_name": "usercreate"
+  }
+}

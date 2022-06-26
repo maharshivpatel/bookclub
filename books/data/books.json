@@ -1,0 +1,58 @@
+{
+    "page" : {
+		"title": "Books",
+		"buttons": [
+			{
+				"btn_text":"Add Book",
+				"url_name": "bookadd",
+				"button_action": "redirect",
+				"css_btn_type": "success"
+			},
+			{
+				"btn_text":"Import Books",
+				"url_name": "booksimport",
+				"button_action": "redirect",
+				"css_btn_type": "primary"
+			}
+		]
+	},
+    "fields" : [
+		{
+			"field_name": "id",
+			"field_title": "ID",
+			"html_attr": "hidden"
+		},
+		{
+			"field_name": "bookid",
+			"field_title": "BookID"
+		},
+		{
+			"field_name": "title",
+			"field_title": "Title",
+			"url_prefix": "details",
+			"html_attr": "autofocus"
+		},
+		{
+			"field_name": "authors_text",
+			"field_title": "Authors"
+		},
+		{
+			"field_name": "publishers_text",
+			"field_title": "Publishers"
+		},
+		{
+			"field_name": "isbn10",
+			"field_title": "ISBN"
+		},
+		{
+			"field_name": "instock_qty",
+			"field_title": "InStock",
+			"css_class": "text-primary fw-bold"
+		},
+		{
+			"field_name": "rented_out_qty",
+			"field_title": "Rented",
+			"css_class": "text-success fw-bold"
+		}
+	]
+}

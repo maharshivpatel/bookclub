@@ -5,6 +5,14 @@ from humanize import precisedelta, naturaldate
 from django.utils.timezone import make_aware
 import requests as rq
 import parsedatetime
+import os, json
+
+def load_json(folder, file):
+	current_folder = os.getcwd()
+	file_path = os.path.join(current_folder, folder, 'data', f'{file}.json')
+	open_file = open(file_path)
+	pagedata = json.load(open_file)
+	return pagedata
 
 
 def handle_filters(request, fields, extra_filters=False, api=False):
@@ -143,6 +151,94 @@ def handle_data(fields, obj):
 	)
 
 	return ready_data
+
+
+def handle_related_data(related_model, related_filters: dict, fields: list[str], header: list[str]):
+
+	filtered_obj = related_model.objects.filter(**related_filters).values_list(*fields)
+
+	
+	ready_body_data = [
+			[	
+				"Not Available"
+				if	field is None
+
+				else	"Yes"
+				if	isinstance(field, bool)
+				and field
+
+				else "No"
+				if	isinstance(field, bool)
+				and  not	field
+
+				else	str(naturaldate(field))
+				if	isinstance(field, datetime)
+				
+				else	'₹ ' + str(field)
+				if isinstance(field, Decimal)
+				
+				else	str(field)
+				
+				for field in trans
+			]
+
+		for trans in filtered_obj
+		]
+	table = {
+				'header': header,
+				'body': ready_body_data
+			}
+	return table
+
+
+def process_data(jsoninfo, request, model, id=False, related_model=False, related_filters=False, modalforms=False):
+
+	pagedata = load_json(**jsoninfo)
+
+	fields = pagedata.get('fields', [])
+	related_table = []
+
+	
+	if modalforms:
+		for modal in pagedata.get('modals', []):
+			modal['form'] = modalforms.get(modal['form'])
+
+	if id:
+		for button in pagedata['page'].get('buttons', []):
+			if button.get('obj_url_id', False):
+				button['obj_url_id'] = id
+			
+		for modal in pagedata.get('modals', []):
+			if modal.get('obj_url_id', False):
+				modal['obj_url_id'] = id
+
+		for related in pagedata.get('related_table', []):
+			
+			related_table.append(
+
+				handle_related_data (
+					related_model,
+					related_filters,
+					**related
+					)
+				)
+		
+		pagedata['related_table'] = related_table
+			
+		
+		filters = {'id': id }
+
+	else:
+		filters = handle_filters(request, fields)
+	
+	fieldlist = [ field['field_name'] for field in fields ]
+
+	obj = model.objects.filter(library=request.user.library, **filters).values(*fieldlist)
+	
+	data = handle_data( fields, obj)
+
+	return pagedata, data
+
 
 
 def get_cover_from_api(url: str):

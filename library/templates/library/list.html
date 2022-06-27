@@ -1,7 +1,7 @@
 {% extends './dashboard_base.html' %}
 {% load static %}
 {% block content %}
-<div class="container bg-white border main-container rounded-3 shadow-sm my-3 mx-3">
+<div class="container d-flex flex-column bg-white border main-container rounded-3 shadow-sm my-3 mx-3">
   <table class="table table-responsive table-style mt-2">
     <thead class="table-white mt-3">
 
@@ -36,6 +36,8 @@
   {% if data|length == 0 %}
   <h4 class="font-italic text-secondary mt-5 pt-5">There aren't any {{page.title}} to display.</h4>
   {% endif %}
+
+  {% include './pagination.html' %}
 
   {% include 'library/modalforms.html' %}
 

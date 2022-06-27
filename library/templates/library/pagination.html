@@ -1,0 +1,27 @@
+{% if pagination.prevpage or pagination.nextpage %}
+<nav aria-label="..." class="mt-auto">
+    <ul class="pagination">
+    {% if pagination.prevpage %}
+    <li class="page-item">
+        <a class="page-link" href="?page_number={{pagination.prevpage}}">Previous</a>
+    </li>
+    <li class="page-item">
+            <a class="page-link" href="?page_number={{pagination.prevpage}}">{{pagination.prevpage}}</a>
+    </li>
+    {% endif %}
+    {% if pagination.currentpage %}
+    <li class="page-item active">
+        <span class="page-link">{{pagination.currentpage}}</span>
+    </li>
+    {% endif %}
+    {% if pagination.nextpage %}
+    <li class="page-item">
+        <a class="page-link" href="?page_number={{pagination.nextpage}}">{{pagination.nextpage}}</a>
+    </li>
+    <li class="page-item">
+        <a class="page-link" href="?page_number={{pagination.nextpage}}">Next</a>
+    </li>
+    {% endif %}
+    </ul>
+  </nav>
+  {% endif %}

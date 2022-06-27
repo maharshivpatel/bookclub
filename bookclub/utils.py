@@ -1,11 +1,13 @@
 from django.contrib import messages
 from decimal import Decimal
 from datetime import datetime, timedelta
+from django.shortcuts import redirect
 from humanize import precisedelta, naturaldate
 from django.utils.timezone import make_aware
 import requests as rq
 import parsedatetime
 import os, json
+from django.core.paginator import Paginator
 
 def load_json(folder, file):
 	current_folder = os.getcwd()
@@ -234,11 +236,40 @@ def process_data(jsoninfo, request, model, id=False, related_model=False, relate
 	fieldlist = [ field['field_name'] for field in fields ]
 
 	obj = model.objects.filter(library=request.user.library, **filters).values(*fieldlist)
-	
-	data = handle_data( fields, obj)
+
+	page_obj, pagination = handle_paginaton(request, obj)
+
+	data = handle_data( fields, page_obj)
+
+	pagedata['pagination'] = pagination
 
 	return pagedata, data
 
+
+def handle_paginaton(request, obj):
+
+	pages = Paginator(obj, 10)
+
+	page_number = request.GET.get('page_number', 1)
+
+	page_obj = pages.get_page(page_number)
+
+	prevpage = False
+	nextpage = False
+
+	if page_obj.has_previous():
+		prevpage = page_obj.previous_page_number()
+	
+	if page_obj.has_next():
+		nextpage = page_obj.next_page_number()
+	
+	pagination = {
+		"prevpage":prevpage,
+		"currentpage": page_number,
+		"nextpage": nextpage,
+	}
+
+	return page_obj, pagination
 
 
 def get_cover_from_api(url: str):

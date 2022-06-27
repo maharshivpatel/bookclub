@@ -3,10 +3,10 @@
     <ul class="pagination">
     {% if pagination.prevpage %}
     <li class="page-item">
-        <a class="page-link" href="?page_number={{pagination.prevpage}}">Previous</a>
+        <a class="page-link" href="?{{request.META.QUERY_STRING}}&page_number={{pagination.prevpage}}">Previous</a>
     </li>
     <li class="page-item">
-            <a class="page-link" href="?page_number={{pagination.prevpage}}">{{pagination.prevpage}}</a>
+            <a class="page-link" href="?{{request.META.QUERY_STRING}}&page_number={{pagination.prevpage}}">{{pagination.prevpage}}</a>
     </li>
     {% endif %}
     {% if pagination.currentpage %}
@@ -16,10 +16,10 @@
     {% endif %}
     {% if pagination.nextpage %}
     <li class="page-item">
-        <a class="page-link" href="?page_number={{pagination.nextpage}}">{{pagination.nextpage}}</a>
+        <a class="page-link" href="?{{request.META.QUERY_STRING}}&page_number={{pagination.nextpage}}">{{pagination.nextpage}}</a>
     </li>
     <li class="page-item">
-        <a class="page-link" href="?page_number={{pagination.nextpage}}">Next</a>
+        <a class="page-link" href="?{{request.META.QUERY_STRING}}&page_number={{pagination.nextpage}}">Next</a>
     </li>
     {% endif %}
     </ul>
